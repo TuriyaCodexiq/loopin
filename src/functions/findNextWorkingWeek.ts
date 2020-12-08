@@ -1,15 +1,15 @@
 import { Dayjs, default as dayjs } from 'dayjs'
-import { getNextWorkingDay, formatDayArr } from '../utils'
+import { getNextWorkingDay, formatDayArr, getThisSunday, trimToNextWeek } from '../utils'
 
-export const findNextWorkingWeek = (startDate: Date = null, extraHolidays: Date[] = []): Date[] => {
-  if (!startDate) startDate = dayjs().toDate()
-  let day = dayjs(startDate)
+export const findNextWorkingWeek = (inputDate: Date = null, extraHolidays: Date[] = []): Date[] => {
+  let day: Dayjs = inputDate ? dayjs(inputDate) : dayjs()
+  let sunday: Dayjs = getThisSunday(day)
   let nextFiveWorkingDays: Dayjs[] = []
   while (nextFiveWorkingDays.length < 5) {
-    let lastDateAdded = nextFiveWorkingDays[nextFiveWorkingDays.length-1] || day
+    let lastDateAdded = nextFiveWorkingDays[nextFiveWorkingDays.length-1] || sunday
     let nextDay = getNextWorkingDay(lastDateAdded, extraHolidays)
     nextFiveWorkingDays.push(nextDay)
   }
-  return formatDayArr(nextFiveWorkingDays)
+  return formatDayArr(trimToNextWeek(day, nextFiveWorkingDays))
 }
 
